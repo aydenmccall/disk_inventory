@@ -5,6 +5,7 @@
 -- 3/10/2022	Ayden McCall	Added Insertion Values to most tables
 -- 3/11/2022	Ayden McCall	Finished Insertion Values
 -- 3/16/2022	Ayden McCall	Changed diskType's 'type_name' to 'typeName'
+									Changed dateTime displays to date only displays -- Done through CAST()
 --									Added Select Statements to bottom of file, identify commonly used data
 									VIEW ViewBorrowerNoLoans added
 --
