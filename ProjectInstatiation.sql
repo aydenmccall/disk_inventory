@@ -9,6 +9,8 @@
 --									Added Select Statements to bottom of file, identify commonly used data
 									VIEW ViewBorrowerNoLoans added
 	3/28/2022	AydenMcCall		Added common Procedures to diskBorrowerLog Along with displayError Procedure
+	3/30/2022	AydenMcCall		Changed displayError to error_custom_handle; Added ins, upd, and del procedures to borrower and disk tables,
+								Granted diskUseram execute privileges on said procedures
 --
 ****************************************************/
 
@@ -368,15 +370,13 @@ INSERT INTO diskBorrowLog
 		USE disk_inventoryAM;
 go
 
-drop proc if exists DisplayError;
-go
-create proc DisplayError 
-	@errorMessage varchar(255)
-AS
-	PRINT @errorMessage;
-go
-
-drop proc if exists InsertLog;
+-- ERROR PROCEDURE --
+CREATE PROC error_custom_handle
+	@customErrorMessage varchar(150) = null
+as
+	if (@customErrorMessage is null)
+		print 'Error, please check your input and contact a system administrator if the problem persists.';
+	print 'error message: ' + @customErrorMessage;
 go
 
 create proc InsertLog 
@@ -392,14 +392,13 @@ AS
 			(@diskID, @borrowerID, @borrowedDate, @returnedDate);
 	END TRY
 	BEGIN CATCH
-		execute DisplayError 'Error inserting record, please try again.';
+		execute error_custom_handle 'Error inserting record, please try again.';
 	END CATCH
 go
 
 InsertLog 3, 2, '3/28/2022';
 EXECUTE InsertLog 300, 2, '3/28/2025'; -- THROWS ERROR
 
-drop proc if exists sp_upd_diskBorrowLog;
 go
 create proc sp_upd_diskBorrowLog
 	@logID int,
@@ -414,7 +413,7 @@ AS
 		WHERE diskLogID = @logID;
 	END TRY
 	BEGIN CATCH
-		execute DisplayError 'Error updating record, please try again.';
+		execute error_custom_handle 'Error updating record, please try again.';
 	END CATCH
 go
 
@@ -423,4 +422,149 @@ go
 
 declare @id int = 13;
 execute sp_upd_diskBorrowLog @id, 11, 11, '3/26/2022', '3/28/2022';
-execute sp_upd_diskBorrowLog @id, 0, -9999, '3/26/2022', '3/28/2022'; -- THROWS ERROR
+execute sp_upd_diskBorrowLog @id, 0, -9999, '3/26/2022', '3/28/2022'; -- THROWS ERROR; GETS CAUGHT AND HANDLED
+go
+
+-- BORROWER TABLE PROCEDURES --
+CREATE PROC sp_ins_borrower -- INSERT RECORD IN BORROWER TABLE
+	@firstName varchar(60),
+	@lastName varchar(60),
+	@phoneNum varchar(20)
+as
+	BEGIN TRY
+		INSERT INTO borrower
+			(firstName, lastName, PhoneNum)
+		VALUES
+			(@firstName, @lastName, @phoneNum)
+	END TRY
+	BEGIN CATCH
+		EXEC error_custom_handle;
+	END CATCH
+go
+
+CREATE PROC sp_upd_borrower -- UPDATE RECORD IN BORROWER TABLE
+	@id int,
+	@firstName varchar(60),
+	@lastName varchar(60),
+	@phoneNum varchar(20)
+as
+	BEGIN TRY
+		UPDATE borrower
+		SET	firstName = @firstName, lastName = @lastName, phoneNum = @phoneNum
+		WHERE borrowerID = @id
+	END TRY
+	BEGIN CATCH
+		EXEC error_custom_handle;
+	END CATCH
+go
+
+CREATE PROC sp_del_borrower -- DELETE ROW FROM BORROWER TABLE + DEPENDENT BORROW RECORDS
+	@id int
+as
+	BEGIN TRY
+		DELETE 
+		FROM diskBorrowLog
+		WHERE borrowerID = @id;
+
+		DELETE 
+		FROM borrower
+		WHERE borrowerID = @id;
+	END TRY
+	BEGIN CATCH
+		EXEC error_custom_handle 'Error encountered, action has been cancelled. Contact your system administrator if problem persists.';
+	END CATCH
+go
+
+-- DISK TABLE PROCEDURES --
+CREATE PROC sp_ins_disk -- INSERT RECORD IN DISK TABLE
+	@diskName varchar(100),
+	@releaseDate varchar(12),
+	@statusID int,
+	@genreID int,
+	@diskTypeID int
+as
+	BEGIN TRY
+		INSERT INTO disk 
+			(diskName, releaseDate, statusID, genreID, diskTypeID)
+		VALUES
+			(@diskName, @releaseDate, @statusID, @genreID, @diskTypeID)
+	END TRY
+	BEGIN CATCH
+		EXEC error_custom_handle;
+	END CATCH
+go
+
+CREATE PROC sp_upd_disk -- UPDATE RECORD IN DISK TABLE
+	@id int,
+	@diskName varchar(100),
+	@releaseDate varchar(12),
+	@statusID int,
+	@genreID int,
+	@diskTypeID int
+as
+	BEGIN TRY
+		UPDATE disk
+		SET	diskName = @diskName, releaseDate = @releaseDate, statusID = @statusID, 
+		genreID = @genreID, diskTypeID = @diskTypeID
+		WHERE diskID = @id
+	END TRY
+	BEGIN CATCH
+		EXEC error_custom_handle;
+	END CATCH
+go
+
+CREATE PROC sp_del_disk -- DELETE ROW FROM DISK TABLE + DEPENDENT BORROW RECORDS
+	@id int
+as
+	BEGIN TRY
+		BEGIN TRAN
+			DELETE 
+			FROM diskBorrowLog
+			WHERE diskID = @id;
+
+			DELETE 
+			FROM disk
+			WHERE diskID = @id;
+
+		COMMIT TRAN
+	END TRY
+	BEGIN CATCH
+		ROLLBACK TRAN
+		EXEC error_custom_handle 'Error encountered, action has been cancelled. Contact your system administrator if problem persists.';
+	END CATCH
+go
+
+GRANT EXEC ON sp_ins_borrower TO diskUseram;
+GRANT EXEC ON sp_upd_borrower TO diskUseram;
+GRANT EXEC ON sp_del_borrower TO diskUseram;
+
+GRANT EXEC ON sp_ins_disk TO diskUseram;
+GRANT EXEC ON sp_upd_disk TO diskUseram;
+GRANT EXEC ON sp_del_disk TO diskUseram;
+
+
+/*		-- RUN PROCS + OUTPUT
+	select TOP 1 * from borrower order by borrowerID desc;	-- INSERT BORROWER
+	EXEC sp_ins_borrower 'Darth', 'Vader', '(208) 991-3113'
+	select TOP 1 * from borrower order by borrowerID desc;
+
+	select * from borrower where borrowerID = 1;	-- UPDATE BORROWER
+	EXEC sp_upd_borrower 1, 'Luke', 'Skywalker', '(802) 119-7997';
+	select * from borrower where borrowerID = 1;
+
+	select * from borrower where borrowerID = 2;	-- DELETE BORROWER
+	EXEC sp_del_borrower 2;
+	select * from borrower where borrowerID = 2;
+
+	select TOP 1 * from disk order by diskID desc;	-- INSERT DISK
+	EXEC sp_ins_disk 'Off The Wall', '3/14/2011', 1, 1, 2
+	select TOP 1 * from disk order by diskID desc;
+
+	select * from disk where diskID = 1;	-- UPDATE DISK
+	EXEC sp_upd_disk 1, 'Void', '3/14/2001', 2, 2, 2;
+	select * from disk where diskID = 1;
+
+	select * from disk where diskID = 2;	-- DELETE DISK
+	EXEC sp_del_disk 2;
+	select * from disk where diskID = 2;
+*/
