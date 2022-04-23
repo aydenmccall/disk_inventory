@@ -1,0 +1,29 @@
+﻿@model List<Disk>
+@{
+    ViewBag.Title = "Disk Manager";
+}
+
+<h1>Disk Manager</h1>
+<a asp-controller="Disk" asp-action="Add">Add New Disk</a>
+<table>
+    <tr>
+        <th>Disk Name</th>
+        <th>Disk Type</th>
+        <th>Release Date</th>
+        <th>Genre</th>
+        <th>Status</th>
+    </tr>
+    @foreach (Disk disk in @Model)
+    {
+<tr>
+    <td>@disk.DiskName</td>
+    <td>@disk.DiskType.TypeName</td>
+    <td>@disk.ReleaseDate.ToShortDateString()</td>
+    <td>@disk.Genre.GenreName</td>
+    <td>@disk.Status.Description</td>
+    <td><a asp-action="Edit" asp-route-id="@disk.DiskId" class="btn btn-primary">Edit</a></td>
+    <td><a asp-action="Delete" asp-route-id="@disk.DiskId" class="btn btn-primary">Delete</a></td>
+</tr>
+    }
+    
+</table>

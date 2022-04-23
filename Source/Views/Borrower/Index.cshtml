@@ -1,0 +1,24 @@
+﻿@model List<Borrower>
+@{ 
+    ViewBag.Title = "Borrower Manager";
+}
+
+<h2>@ViewBag.Title</h2>
+<a asp-controller="Borrower" asp-action="Add" asp-route-id="0">Add New Borrower</a>
+<table>
+    <tr>
+        <th>Last Name</th>
+        <th>First Name</th>
+        <th>Phone Number</th>
+    </tr>
+    @foreach (Borrower borrower in @Model)
+    {
+<tr>
+    <td>@borrower.LastName</td>
+    <td>@borrower.FirstName</td>
+    <td>@borrower.PhoneNum</td>
+    <td><a asp-action="edit" asp-route-id="@borrower.BorrowerId" class="btn btn-primary">Edit</a></td>
+    <td><a asp-action="delete" asp-route-id="@borrower.BorrowerId" class="btn btn-primary">Delete</a></td>
+</tr>
+    }
+</table>
