@@ -1,0 +1,42 @@
+﻿@model BorrowLogViewModel
+@{
+    ViewBag.Title = ViewBag.Action + " Checkout";
+}
+<h2>@ViewBag.Title</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+<form asp-action="@ViewBag.Action" method="post">
+    <div class="form-group">
+        <label asp-for="DiskId">Disk</label>
+        <select asp-for="DiskId">
+            <option value="">Select a Disk</option>
+            @foreach (Disk disk in Model.Disks)
+            {
+                <option value="@disk.DiskId">@disk.DiskName</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="BorrowerId">Borrower</label>
+        <select asp-for="BorrowerId">
+            <option value="">Select a Borrower</option>
+            @foreach (Borrower borrower in Model.Borrowers)
+            {
+                <option value="@borrower.BorrowerId">@borrower.FirstName @borrower.LastName</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label asp-for="BorrowedDate">Borrow Date</label>
+        <input asp-for="BorrowedDate" class="form-control" type="date"/>
+    </div>
+    <div>
+        <label asp-for="ReturnedDate">Return Date</label>
+        <input asp-for="ReturnedDate" class="form-control" type="date"/>
+    </div>
+    <input type="hidden" asp-for="@Model.DiskLogId" /> <br />
+    <div>
+        <Button type="submit" class="btn btn-primary">@ViewBag.Action</Button>
+                <a asp-controller="BorrowLog" asp-action="Index" class="btn btn-primary">Cancel</a>
+    </div>
+</form>

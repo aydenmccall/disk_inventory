@@ -1,0 +1,39 @@
+﻿@model List<DiskBorrowLog>
+@{
+    ViewBag.Title = "Borrow Log Manager";
+}
+<h1>@ViewBag.Title</h1>
+
+<div class="text-success">@ViewBag.Message</div>
+
+<a asp-controller="BorrowLog" asp-action="Add">Add New Log</a>
+<table>
+    <tr>
+        <th>Disk Name</th>
+        <th>Borrower Name</th>
+        <th>Borrow Date</th>
+        <th>Return Date</th>
+    </tr>
+    @foreach (DiskBorrowLog log in @Model)
+    {
+        DateTime returnedDate = log.ReturnedDate ?? new DateTime();
+        
+<tr>
+    <td>@log.Disk.DiskName</td>
+    <td>@log.Borrower.FirstName @log.Borrower.LastName</td>
+    <td>@log.BorrowedDate.ToShortDateString()</td>
+    @if (log.ReturnedDate != null)
+    {
+        <td>@returnedDate.ToShortDateString()</td>
+    }
+    else
+    {
+        <td>Not Returned</td>
+    }
+
+    <td><a asp-action="Edit" asp-route-id="@log.DiskLogId" class="btn btn-primary">Edit</a></td>
+
+</tr>
+    }
+
+</table>

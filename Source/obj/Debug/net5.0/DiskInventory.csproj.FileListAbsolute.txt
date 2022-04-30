@@ -88,3 +88,5 @@ C:\Users\amccall\Documents\AAA-Projects\SWDV 235\Week3\DiskInventory\DiskInvento
 C:\Users\amccall\Documents\AAA-Projects\SWDV 235\Week3\DiskInventory\DiskInventory\obj\Debug\net5.0\Razor\Views\Borrower\Edit.cshtml.g.cs
 C:\Users\amccall\Documents\AAA-Projects\SWDV 235\Week3\DiskInventory\DiskInventory\obj\Debug\net5.0\Razor\Views\Disk\Edit.cshtml.g.cs
 C:\Users\amccall\Documents\AAA-Projects\SWDV 235\Week3\DiskInventory\DiskInventory\obj\Debug\net5.0\Razor\Views\Disk\Delete.cshtml.g.cs
+C:\Users\amccall\Documents\AAA-Projects\SWDV 235\Week3\DiskInventory\DiskInventory\obj\Debug\net5.0\Razor\Views\BorrowLog\Index.cshtml.g.cs
+C:\Users\amccall\Documents\AAA-Projects\SWDV 235\Week3\DiskInventory\DiskInventory\obj\Debug\net5.0\Razor\Views\BorrowLog\Edit.cshtml.g.cs
