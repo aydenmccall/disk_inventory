@@ -23,25 +23,27 @@ namespace DiskInventory.Controllers
         private DiskBorrowLog ConvertFromViewToLog(BorrowLogViewModel logViewModel)
         {
             DiskBorrowLog log = new DiskBorrowLog();
-            log.DiskLogId = logViewModel.DiskLogId;
-            log.Disk = logViewModel.Disk;
-            log.DiskId = logViewModel.DiskId.GetValueOrDefault();
-            log.Borrower = logViewModel.Borrower;
-            log.BorrowerId = logViewModel.BorrowerId.GetValueOrDefault();
-            log.BorrowedDate = logViewModel.BorrowedDate.GetValueOrDefault();
-            log.ReturnedDate = logViewModel.ReturnedDate;
+            //log.DiskLogId = logViewModel.DiskLogId;
+            //log.Disk = logViewModel.Disk;
+            //log.DiskId = logViewModel.DiskId.GetValueOrDefault();
+            //log.Borrower = logViewModel.Borrower;
+            //log.BorrowerId = logViewModel.BorrowerId.GetValueOrDefault();
+            //log.BorrowedDate = logViewModel.BorrowedDate.GetValueOrDefault();
+            //log.ReturnedDate = logViewModel.ReturnedDate;
+            log = logViewModel.log;
             return log;
         }
         private BorrowLogViewModel ConvertFromLogToView(DiskBorrowLog log)
         {
             BorrowLogViewModel logViewModel = CreateViewModel();
-            logViewModel.DiskLogId = log.DiskLogId;
-            logViewModel.Disk = log.Disk;
-            logViewModel.DiskId = log.DiskId;
-            logViewModel.Borrower = log.Borrower;
-            logViewModel.BorrowerId = log.BorrowerId;
-            logViewModel.BorrowedDate = log.BorrowedDate;
-            logViewModel.ReturnedDate = log.ReturnedDate;
+            //logViewModel.DiskLogId = log.DiskLogId;
+            //logViewModel.Disk = log.Disk;
+            //logViewModel.DiskId = log.DiskId;
+            //logViewModel.Borrower = log.Borrower;
+            //logViewModel.BorrowerId = log.BorrowerId;
+            //logViewModel.BorrowedDate = log.BorrowedDate;
+            //logViewModel.ReturnedDate = log.ReturnedDate;
+            logViewModel.log = log;
             return logViewModel;
         }
         public IActionResult Index(string message = "")

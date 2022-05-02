@@ -8,15 +8,20 @@ namespace DiskInventory.Models
 {
     public class BorrowLogViewModel
     {
-        public int DiskLogId { get; set; }
-        [Required(ErrorMessage = "Please Select a Disk.")]
-        public int? DiskId { get; set; }
-        [Required(ErrorMessage = "Please Select a Borrower.")]
-        public int? BorrowerId { get; set; }
-        [Required(ErrorMessage ="Please Enter The Date The Product was Borrowed.")]
-        public DateTime? BorrowedDate { get; set; }
-        public DateTime? ReturnedDate { get; set; }
+        //public int DiskLogId { get; set; }                                      // VIRTUAL REFERENCE IS BETTER :)
+        //[Required(ErrorMessage = "Please Select a Disk.")]
+        //public int? DiskId { get; set; }
+        //[Required(ErrorMessage = "Please Select a Borrower.")]
+        //public int? BorrowerId { get; set; }
+        //[Required(ErrorMessage ="Please Enter The Date The Product was Borrowed.")]
+        //public DateTime? BorrowedDate { get; set; }
+        //public DateTime? ReturnedDate { get; set; }
+        public BorrowLogViewModel()
+        {
+            log = new DiskBorrowLog();
+        }
 
+        public virtual DiskBorrowLog log { get; set;}
         public virtual Borrower Borrower { get; set; }
         public virtual Disk Disk { get; set; }
 

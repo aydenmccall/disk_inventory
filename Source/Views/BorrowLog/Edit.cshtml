@@ -7,8 +7,8 @@
 <div asp-validation-summary="All" class="text-danger"></div>
 <form asp-action="@ViewBag.Action" method="post">
     <div class="form-group">
-        <label asp-for="DiskId">Disk</label>
-        <select asp-for="DiskId">
+        <label asp-for="log.DiskId">Disk</label>
+        <select asp-for="log.DiskId">
             <option value="">Select a Disk</option>
             @foreach (Disk disk in Model.Disks)
             {
@@ -17,8 +17,8 @@
         </select>
     </div>
     <div class="form-group">
-        <label asp-for="BorrowerId">Borrower</label>
-        <select asp-for="BorrowerId">
+        <label asp-for="log.BorrowerId">Borrower</label>
+        <select asp-for="log.BorrowerId">
             <option value="">Select a Borrower</option>
             @foreach (Borrower borrower in Model.Borrowers)
             {
@@ -27,14 +27,14 @@
         </select>
     </div>
     <div>
-        <label asp-for="BorrowedDate">Borrow Date</label>
-        <input asp-for="BorrowedDate" class="form-control" type="date"/>
+        <label asp-for="log.BorrowedDate">Borrow Date</label>
+        <input asp-for="log.BorrowedDate" class="form-control" type="date"/>
     </div>
     <div>
-        <label asp-for="ReturnedDate">Return Date</label>
-        <input asp-for="ReturnedDate" class="form-control" type="date"/>
+        <label asp-for="log.ReturnedDate">Return Date</label>
+        <input asp-for="log.ReturnedDate" class="form-control" type="date"/>
     </div>
-    <input type="hidden" asp-for="@Model.DiskLogId" /> <br />
+    <input type="hidden" asp-for="@Model.log.DiskLogId" /> <br />
     <div>
         <Button type="submit" class="btn btn-primary">@ViewBag.Action</Button>
                 <a asp-controller="BorrowLog" asp-action="Index" class="btn btn-primary">Cancel</a>
