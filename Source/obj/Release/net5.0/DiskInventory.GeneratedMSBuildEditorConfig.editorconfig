@@ -7,4 +7,4 @@ build_property.PublishSingleFile =
 build_property.IncludeAllContentForSelfExtract = 
 build_property._SupportedPlatformList = Android,iOS,Linux,macOS,Windows
 build_property.RootNamespace = DiskInventory
-build_property.ProjectDir = C:\Users\amccall\Source\Repos\aydenmccall\disk_inventory\Source\
+build_property.ProjectDir = C:\Users\amccall\Documents\AAA-Projects\SWDV 235\Week5\DiskInventory\DiskInventory\

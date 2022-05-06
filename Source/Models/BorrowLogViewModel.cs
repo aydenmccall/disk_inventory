@@ -18,10 +18,10 @@ namespace DiskInventory.Models
         //public DateTime? ReturnedDate { get; set; }
         public BorrowLogViewModel()
         {
-            log = new DiskBorrowLog();
+            Log = new DiskBorrowLog();
         }
 
-        public virtual DiskBorrowLog log { get; set;}
+        public virtual DiskBorrowLog Log { get; set;}
         public virtual Borrower Borrower { get; set; }
         public virtual Disk Disk { get; set; }
 

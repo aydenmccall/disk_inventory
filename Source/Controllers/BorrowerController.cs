@@ -12,8 +12,10 @@ namespace DiskInventory.Controllers
     {
         private disk_inventoryamContext context;
         public BorrowerController(disk_inventoryamContext ctx) => context = ctx;
-        public IActionResult Index()
+        public IActionResult Index(string message = "", string textClass = "text-success")
         {
+            ViewBag.Message = message;
+            ViewBag.TextClass = textClass;
             List<Borrower> borrowers = context.Borrowers.OrderBy(b => b.LastName).ThenBy(b => b.FirstName).ToList();
             return View(borrowers);
         }
@@ -35,12 +37,23 @@ namespace DiskInventory.Controllers
         {
             if(ModelState.IsValid)
             {
+
                 if (borrower.BorrowerId == 0)
-                    context.Add(borrower);
+                {
+                    //context.Add(borrower);
+                    context.Database.ExecuteSqlRaw("execute sp_ins_borrower @p0, @p1, @p2",
+                        parameters: new[] { borrower.FirstName.ToString(), borrower.LastName.ToString(), borrower.PhoneNum.ToString() });
+                    context.SaveChanges();
+                    return RedirectToAction("Index", "Borrower", new { message = "Borrower Successfully Added"});
+                }
                 else
-                    context.Update(borrower);
-                context.SaveChanges();
-                return RedirectToAction("Index", "Borrower");
+                {
+                    //context.Update(borrower);
+                    context.Database.ExecuteSqlRaw("execute sp_upd_borrower @p0, @p1, @p2, @p3",
+                        parameters: new[] { borrower.BorrowerId.ToString(), borrower.FirstName.ToString(), borrower.LastName.ToString(), borrower.PhoneNum.ToString() });
+                    context.SaveChanges();
+                    return RedirectToAction("Index", "Borrower", new { message = "Borrower Successfully Edited" });
+                }
             }
             else
             {
@@ -58,9 +71,19 @@ namespace DiskInventory.Controllers
         [HttpPost]
         public IActionResult Delete(Borrower borrower)
         {
-            context.Borrowers.Remove(borrower);
-            context.SaveChanges();
-            return RedirectToAction("Index", "Borrower");
+            try
+            {
+                context.Database.ExecuteSqlRaw("execute sp_del_borrower @p0",
+                parameters: borrower.BorrowerId.ToString());
+                context.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                return RedirectToAction("Index", "Borrower", new { message = "Borrow Log Records related to borrower conflict with deletion. Please remove associated records first.", textClass = "text-danger" });
+            }
+                
+            
+            return RedirectToAction("Index", "Borrower", new { message = "Borrower Successfully Removed " });
         }
     }
 }

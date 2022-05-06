@@ -13,39 +13,27 @@ namespace DiskInventory.Controllers
         private disk_inventoryamContext context;
         public BorrowLogController(disk_inventoryamContext ctx) => context = ctx;
 
-        private BorrowLogViewModel CreateViewModel()
+        private BorrowLogViewModel CreateViewModel(DiskBorrowLog log = null)
         {
             BorrowLogViewModel logViewModel = new BorrowLogViewModel();
             logViewModel.Disks = context.Disks.OrderBy(d => d.DiskName).ToList();
             logViewModel.Borrowers = context.Borrowers.OrderBy(b => b.LastName).ToList();
+            if (log != null)
+                logViewModel.Log = log;
             return logViewModel;
         }
-        private DiskBorrowLog ConvertFromViewToLog(BorrowLogViewModel logViewModel)
-        {
-            DiskBorrowLog log = new DiskBorrowLog();
-            //log.DiskLogId = logViewModel.DiskLogId;
-            //log.Disk = logViewModel.Disk;
-            //log.DiskId = logViewModel.DiskId.GetValueOrDefault();
-            //log.Borrower = logViewModel.Borrower;
-            //log.BorrowerId = logViewModel.BorrowerId.GetValueOrDefault();
-            //log.BorrowedDate = logViewModel.BorrowedDate.GetValueOrDefault();
-            //log.ReturnedDate = logViewModel.ReturnedDate;
-            log = logViewModel.log;
-            return log;
-        }
-        private BorrowLogViewModel ConvertFromLogToView(DiskBorrowLog log)
-        {
-            BorrowLogViewModel logViewModel = CreateViewModel();
-            //logViewModel.DiskLogId = log.DiskLogId;
-            //logViewModel.Disk = log.Disk;
-            //logViewModel.DiskId = log.DiskId;
-            //logViewModel.Borrower = log.Borrower;
-            //logViewModel.BorrowerId = log.BorrowerId;
-            //logViewModel.BorrowedDate = log.BorrowedDate;
-            //logViewModel.ReturnedDate = log.ReturnedDate;
-            logViewModel.log = log;
-            return logViewModel;
-        }
+        //private DiskBorrowLog ConvertFromViewToLog(BorrowLogViewModel logViewModel)
+        //{
+        //    DiskBorrowLog log = new DiskBorrowLog();
+        //    log = logViewModel.Log;
+        //    return log;
+        //}
+        //private BorrowLogViewModel ConvertFromLogToView(DiskBorrowLog log)
+        //{
+        //    BorrowLogViewModel logViewModel = CreateViewModel();
+        //    logViewModel.Log = log;
+        //    return logViewModel;
+        //}
         public IActionResult Index(string message = "")
         {
             ViewBag.message = message;
@@ -58,21 +46,25 @@ namespace DiskInventory.Controllers
         {
             ViewBag.Action = "Edit";
             DiskBorrowLog log = context.DiskBorrowLogs.Find(id);
-            BorrowLogViewModel viewModel = ConvertFromLogToView(log);
+            BorrowLogViewModel viewModel = CreateViewModel(log);
             return View(viewModel);
         }
         [HttpPost]
         public IActionResult Edit(BorrowLogViewModel logViewModel)
         {
-            DiskBorrowLog log = ConvertFromViewToLog(logViewModel);
+            //DiskBorrowLog log = ConvertFromViewToLog(logViewModel);
             ViewBag.Action = "Edit";
             if (ModelState.IsValid)
             {
-                context.DiskBorrowLogs.Update(log);
+                //context.DiskBorrowLogs.Update(logViewModel.Log);
+                context.Database.ExecuteSqlRaw("execute sp_upd_diskBorrowLog @p0, @p1, @p2, @p3, @p4", 
+                    parameters: new[] { logViewModel.Log.DiskLogId.ToString(), logViewModel.Log.DiskId.ToString(), logViewModel.Log.BorrowerId.ToString(), 
+                    logViewModel.Log.BorrowedDate?.ToShortDateString(), logViewModel.Log.ReturnedDate?.ToShortDateString()});
+
                 context.SaveChanges();
                 return RedirectToAction("Index", new { message = "Log Edited Successfully." });
             }
-            return View(ConvertFromLogToView(log));
+            return View(logViewModel);
                
         }
         [HttpGet]
@@ -86,10 +78,12 @@ namespace DiskInventory.Controllers
         public IActionResult Add(BorrowLogViewModel logViewModel)
         {
             ViewBag.Action = "Add";
-            DiskBorrowLog log = ConvertFromViewToLog(logViewModel);
             if(ModelState.IsValid)
             {
-                context.DiskBorrowLogs.Add(log);
+                //context.DiskBorrowLogs.Add(logViewModel.Log);
+                context.Database.ExecuteSqlRaw("execute sp_ins_diskBorrowLog @p0, @p1, @p2, @p3",
+                    parameters: new[] { logViewModel.Log.DiskId.ToString(), logViewModel.Log.BorrowerId.ToString(),
+                    logViewModel.Log.BorrowedDate?.ToShortDateString(), logViewModel.Log.ReturnedDate?.ToShortDateString()});
                 context.SaveChanges();
                 return RedirectToAction("Index", new { message = "Log Added Successfully." });
             }

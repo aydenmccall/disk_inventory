@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\amccall\\Documents\\AAA-Projects\\SWDV 235\\Week4\\DiskInventory\\DiskInventory\\DiskInventory.csproj": {}
+    "C:\\Users\\amccall\\Documents\\AAA-Projects\\SWDV 235\\Week5\\DiskInventory\\DiskInventory\\DiskInventory.csproj": {}
   },
   "projects": {
-    "C:\\Users\\amccall\\Documents\\AAA-Projects\\SWDV 235\\Week4\\DiskInventory\\DiskInventory\\DiskInventory.csproj": {
+    "C:\\Users\\amccall\\Documents\\AAA-Projects\\SWDV 235\\Week5\\DiskInventory\\DiskInventory\\DiskInventory.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\amccall\\Documents\\AAA-Projects\\SWDV 235\\Week4\\DiskInventory\\DiskInventory\\DiskInventory.csproj",
+        "projectUniqueName": "C:\\Users\\amccall\\Documents\\AAA-Projects\\SWDV 235\\Week5\\DiskInventory\\DiskInventory\\DiskInventory.csproj",
         "projectName": "DiskInventory",
-        "projectPath": "C:\\Users\\amccall\\Documents\\AAA-Projects\\SWDV 235\\Week4\\DiskInventory\\DiskInventory\\DiskInventory.csproj",
+        "projectPath": "C:\\Users\\amccall\\Documents\\AAA-Projects\\SWDV 235\\Week5\\DiskInventory\\DiskInventory\\DiskInventory.csproj",
         "packagesPath": "C:\\Users\\amccall\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\amccall\\Documents\\AAA-Projects\\SWDV 235\\Week4\\DiskInventory\\DiskInventory\\obj\\",
+        "outputPath": "C:\\Users\\amccall\\Documents\\AAA-Projects\\SWDV 235\\Week5\\DiskInventory\\DiskInventory\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\amccall\\AppData\\Roaming\\NuGet\\NuGet.Config",

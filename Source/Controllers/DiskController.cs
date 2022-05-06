@@ -14,8 +14,10 @@ namespace DiskInventory.Controllers
         private disk_inventoryamContext context;
 
         public DiskController(disk_inventoryamContext ctx) => context = ctx;
-        public IActionResult Index()
+        public IActionResult Index(string message = "", string textClass = "text-success")
         {
+            ViewBag.Message = message;
+            ViewBag.TextClass = textClass;
             List<Disk> disks = context.Disks.OrderBy(d => d.DiskName).ThenBy(d => d.ReleaseDate).Include(d => d.DiskType).Include(d => d.Genre)
                 .Include(d => d.Status).ToList();
             return View(disks);
@@ -36,7 +38,7 @@ namespace DiskInventory.Controllers
             ViewBag.Statuses = context.Statuses.OrderBy(g => g.StatusId).ToList();
             ViewBag.Genres = context.Genres.OrderBy(g => g.GenreName).ToList();
             ViewBag.DiskTypes = context.DiskTypes.OrderBy(g => g.TypeName).ToList();
-            Disk disk = context.Disks.Find(id); // ?? new Disk();
+            Disk disk = context.Disks.Find(id);
             return View(disk);
         }
         [HttpPost]
@@ -45,11 +47,20 @@ namespace DiskInventory.Controllers
             if (ModelState.IsValid)
             {
                 if (disk.DiskId == 0)
-                    context.Add(disk);
+                {
+                    //context.Add(disk);
+                    context.Database.ExecuteSqlRaw("execute sp_ins_disk @p0, @p1, @p2, @p3, @p4",
+                        parameters: new[] { disk.DiskName.ToString(), disk.ReleaseDate.ToShortDateString(), disk.StatusId.ToString(), disk.GenreId.ToString(), disk.DiskTypeId.ToString() });
+                    context.SaveChanges();
+                    return RedirectToAction("Index", "Disk", new { message = "Disk Successfully Added"});
+                }
                 else
-                    context.Update(disk);
-                context.SaveChanges();
-                return RedirectToAction("Index", "Disk");
+                {
+                    context.Database.ExecuteSqlRaw("execute sp_upd_disk @p0, @p1, @p2, @p3, @p4, @p5",
+                         parameters: new[] { disk.DiskId.ToString(), disk.DiskName.ToString(), disk.ReleaseDate.ToShortDateString(), disk.StatusId.ToString(), disk.GenreId.ToString(), disk.DiskTypeId.ToString() });
+                    context.SaveChanges();
+                    return RedirectToAction("Index", "Disk", new { message = "Disk Successfully Edited" });
+                }
             }
             else
             {
@@ -70,9 +81,17 @@ namespace DiskInventory.Controllers
         [HttpPost]
         public IActionResult Delete(Disk disk)
         {
-            context.Disks.Remove(disk);
-            context.SaveChanges();
-            return RedirectToAction("Index", "Disk");
+            try
+            {
+                context.Database.ExecuteSqlRaw("execute sp_del_disk @p0",
+                parameters: disk.DiskId.ToString());
+                context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("Index", "Disk", new { message = "Borrow Log Records related to disk conflict with deletion. Please remove associated records first.", textClass = "text-danger" });
+            }
+            return RedirectToAction("Index", "Disk", new { message = "Disk Successfully Removed"});
         }
     }
 }

@@ -3,7 +3,8 @@
     ViewBag.Title = "Disk Manager";
 }
 
-<h1>Disk Manager</h1>
+<h1>@ViewBag.Title</h1>
+<div class="@ViewBag.TextClass">@ViewBag.Message</div>
 <a asp-controller="Disk" asp-action="Add">Add New Disk</a>
 <table>
     <tr>
